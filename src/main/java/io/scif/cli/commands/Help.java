@@ -28,11 +28,11 @@
  * #L%
  */
 
-package io.scif.tools.commands;
+package io.scif.cli.commands;
 
-import io.scif.tools.AbstractSCIFIOToolCommand;
-import io.scif.tools.SCIFIOToolCommand;
-import io.scif.tools.SCIFIOTools;
+import io.scif.cli.AbstractSCIFIOToolCommand;
+import io.scif.cli.SCIFIOToolCommand;
+import io.scif.cli.SCIFIOTools;
 
 import java.util.ArrayList;
 import java.util.List;

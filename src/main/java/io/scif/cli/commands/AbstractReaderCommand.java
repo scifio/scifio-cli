@@ -28,7 +28,7 @@
  * #L%
  */
 
-package io.scif.tools.commands;
+package io.scif.cli.commands;
 
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
@@ -43,9 +43,9 @@ import io.scif.filters.MinMaxFilter;
 import io.scif.filters.PlaneSeparator;
 import io.scif.filters.ReaderFilter;
 import io.scif.services.InitializeService;
-import io.scif.tools.AbstractSCIFIOToolCommand;
-import io.scif.tools.LongArrayOptionHandler;
-import io.scif.tools.SCIFIOToolCommand;
+import io.scif.cli.AbstractSCIFIOToolCommand;
+import io.scif.cli.LongArrayOptionHandler;
+import io.scif.cli.SCIFIOToolCommand;
 import io.scif.util.FormatTools;
 
 import java.io.IOException;

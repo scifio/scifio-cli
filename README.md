@@ -1,5 +1,5 @@
-SCIFIO-Tools
-============
+SCIFIO Command Line Tools
+=========================
 
 An extensible application for using SCIFIO components from the command line.
 

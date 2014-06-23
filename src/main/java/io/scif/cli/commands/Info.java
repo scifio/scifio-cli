@@ -28,7 +28,7 @@
  * #L%
  */
 
-package io.scif.tools.commands;
+package io.scif.cli.commands;
 
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
@@ -36,8 +36,8 @@ import io.scif.MetaTable;
 import io.scif.Metadata;
 import io.scif.config.SCIFIOConfig;
 import io.scif.services.InitializeService;
-import io.scif.tools.AbstractSCIFIOToolCommand;
-import io.scif.tools.SCIFIOToolCommand;
+import io.scif.cli.AbstractSCIFIOToolCommand;
+import io.scif.cli.SCIFIOToolCommand;
 import io.scif.util.FormatTools;
 
 import java.io.IOException;

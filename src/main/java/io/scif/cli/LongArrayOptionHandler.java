@@ -28,7 +28,7 @@
  * #L%
  */
 
-package io.scif.tools;
+package io.scif.cli;
 
 import java.lang.reflect.Field;
 

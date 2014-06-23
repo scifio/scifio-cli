@@ -28,7 +28,7 @@
  * #L%
  */
 
-package io.scif.tools.commands;
+package io.scif.cli.commands;
 
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
@@ -41,7 +41,7 @@ import io.scif.io.ByteArrayHandle;
 import io.scif.io.Location;
 import io.scif.io.RandomAccessInputStream;
 import io.scif.services.LocationService;
-import io.scif.tools.SCIFIOToolCommand;
+import io.scif.cli.SCIFIOToolCommand;
 import io.scif.util.AsciiImage;
 import io.scif.util.FormatTools;
 

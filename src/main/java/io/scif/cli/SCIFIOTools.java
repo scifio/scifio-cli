@@ -28,7 +28,7 @@
  * #L%
  */
 
-package io.scif.tools;
+package io.scif.cli;
 
 import io.scif.SCIFIOService;
 
@@ -48,7 +48,7 @@ import org.scijava.service.SciJavaService;
  * command line arguments, where the first argument is the simple, lowercase
  * class name of the desired command.
  * <p>
- * For example, {@link io.scif.tools.commands.Show} can be invoked by passing
+ * For example, {@link io.scif.cli.commands.Show} can be invoked by passing
  * {@code show ...} to the {@link #run(String...)} method, or as a main method
  * argument.
  * </p>

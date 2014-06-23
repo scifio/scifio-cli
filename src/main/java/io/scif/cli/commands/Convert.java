@@ -28,7 +28,7 @@
  * #L%
  */
 
-package io.scif.tools.commands;
+package io.scif.cli.commands;
 
 import io.scif.FormatException;
 import io.scif.Metadata;
@@ -42,7 +42,7 @@ import io.scif.formats.TIFFFormat;
 import io.scif.io.Location;
 import io.scif.services.InitializeService;
 import io.scif.services.LocationService;
-import io.scif.tools.SCIFIOToolCommand;
+import io.scif.cli.SCIFIOToolCommand;
 
 import java.io.BufferedReader;
 import java.io.IOException;
