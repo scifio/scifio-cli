@@ -6,6 +6,7 @@
 		<groupId>io.scif</groupId>
 		<artifactId>pom-scifio</artifactId>
 		<version>1.0</version>
+		<relativePath />
 	</parent>
 
 	<groupId>io.scif</groupId>
