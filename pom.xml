@@ -3,9 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.scijava</groupId>
-		<artifactId>pom-scijava</artifactId>
-		<version>2.22</version>
+		<groupId>io.scif</groupId>
+		<artifactId>pom-scifio</artifactId>
+		<version>1.0</version>
 	</parent>
 
 	<groupId>io.scif</groupId>
@@ -14,57 +14,6 @@
 
 	<name>SCIFIO Command Line Tools</name>
 	<description>Pluggable command-line tools for performing SCIFIO-based image IO operations.</description>
-	<url>http://scif.io/</url>
-	<inceptionYear>2011</inceptionYear>
-	<organization>
-		<name>SCIFIO</name>
-		<url>http://scif.io/</url>
-	</organization>
-	<licenses>
-		<license>
-			<name>Simplified BSD License</name>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
-	<developers>
-		<developer>
-			<id>hinerm</id>
-			<name>Mark Hiner</name>
-			<email>hiner@wisc.edu</email>
-			<url>http://developer.imagej.net/users/hinerm</url>
-			<organization>UW-Madison LOCI</organization>
-			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>-6</timezone>
-		</developer>
-		<developer>
-			<id>ctrueden</id>
-			<name>Curtis Rueden</name>
-			<email>ctrueden@wisc.edu</email>
-			<url>http://loci.wisc.edu/people/curtis-rueden</url>
-			<organization>UW-Madison LOCI</organization>
-			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>-6</timezone>
-		</developer>
-	</developers>
-
-	<mailingLists>
-		<mailingList>
-			<name>SCIFIO</name>
-			<subscribe>http://scif.io/mailman/listinfo/scifio</subscribe>
-			<unsubscribe>http://scif.io/mailman/listinfo/scifio</unsubscribe>
-			<post>scifio@scif.io</post>
-			<archive>http://scif.io/pipermail/scifio/</archive>
-		</mailingList>
-	</mailingLists>
 
 	<scm>
 		<connection>scm:git:git://github.com/scifio/scifio-cli</connection>
