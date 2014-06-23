@@ -27,7 +27,7 @@
 	</issueManagement>
 	<ciManagement>
 		<system>Jenkins</system>
-		<url>http://jenkins.imagej.net/job/SCIFIO-cli/</url>
+		<url>http://jenkins.imagej.net/job/SCIFIO-CLI/</url>
 	</ciManagement>
 
 	<repositories>
