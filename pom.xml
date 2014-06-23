@@ -26,9 +26,8 @@
 	<dependencies>
 		<!-- Project dependencies -->
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>io.scif</groupId>
 			<artifactId>scifio</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<!-- SciJava dependencies -->
