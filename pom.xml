@@ -11,7 +11,7 @@
 
 	<groupId>io.scif</groupId>
 	<artifactId>scifio-cli</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>0.1.1-SNAPSHOT</version>
 
 	<name>SCIFIO Command Line Tools</name>
 	<description>Pluggable command-line tools for performing SCIFIO-based image IO operations.</description>
