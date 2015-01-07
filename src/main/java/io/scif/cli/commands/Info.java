@@ -34,10 +34,10 @@ import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.MetaTable;
 import io.scif.Metadata;
-import io.scif.config.SCIFIOConfig;
-import io.scif.services.InitializeService;
 import io.scif.cli.AbstractSCIFIOToolCommand;
 import io.scif.cli.SCIFIOToolCommand;
+import io.scif.config.SCIFIOConfig;
+import io.scif.services.InitializeService;
 import io.scif.util.FormatTools;
 
 import java.io.IOException;
@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import net.imglib2.meta.CalibratedAxis;
+import net.imagej.axis.CalibratedAxis;
 
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;

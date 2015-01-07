@@ -35,6 +35,9 @@ import io.scif.ImageMetadata;
 import io.scif.Metadata;
 import io.scif.Plane;
 import io.scif.Reader;
+import io.scif.cli.AbstractSCIFIOToolCommand;
+import io.scif.cli.LongArrayOptionHandler;
+import io.scif.cli.SCIFIOToolCommand;
 import io.scif.common.DataTools;
 import io.scif.config.SCIFIOConfig;
 import io.scif.filters.ChannelFiller;
@@ -43,16 +46,13 @@ import io.scif.filters.MinMaxFilter;
 import io.scif.filters.PlaneSeparator;
 import io.scif.filters.ReaderFilter;
 import io.scif.services.InitializeService;
-import io.scif.cli.AbstractSCIFIOToolCommand;
-import io.scif.cli.LongArrayOptionHandler;
-import io.scif.cli.SCIFIOToolCommand;
 import io.scif.util.FormatTools;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import net.imglib2.meta.CalibratedAxis;
+import net.imagej.axis.CalibratedAxis;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.Option;
