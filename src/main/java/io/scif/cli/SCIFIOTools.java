@@ -103,6 +103,7 @@ public final class SCIFIOTools {
 		}
 
 		ctx.getService(LogService.class).error(msg);
+		ctx.dispose();
 	}
 
 	// -- Helper methods --
