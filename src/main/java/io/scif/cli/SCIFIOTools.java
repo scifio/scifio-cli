@@ -88,6 +88,7 @@ public final class SCIFIOTools {
 			// Run the command, passing down the command arguments
 			if (cmd != null) {
 				cmd.runCommand(Arrays.copyOfRange(args, 1, args.length));
+				ctx.dispose();
 				return;
 			}
 		}
