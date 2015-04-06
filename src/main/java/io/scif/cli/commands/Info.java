@@ -129,7 +129,7 @@ public class Info extends AbstractSCIFIOToolCommand {
 	 */
 	private void printImageMetadata(final Metadata meta) {
 		info("");
-		info("Reading image metdata");
+		info("Reading image metadata");
 
 		for (int i = 0; i < meta.getImageCount(); i++) {
 			info("Image: " + (i + 1));
@@ -217,7 +217,7 @@ public class Info extends AbstractSCIFIOToolCommand {
 		info("Dataset: " + meta.getDatasetName());
 		info("Dataset size: " + meta.getDatasetSize());
 		info("Image count: " + meta.getImageCount());
-		info("Reading dataset metdata");
+		info("Reading dataset metadata");
 		printTable(meta.getTable());
 	}
 
