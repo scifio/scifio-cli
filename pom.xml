@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>scifio-cli</artifactId>
-	<version>0.3.2-SNAPSHOT</version>
+	<version>0.3.3-SNAPSHOT</version>
 
 	<name>SCIFIO Command Line Tools</name>
 	<description>Pluggable command-line tools for performing SCIFIO-based image IO operations.</description>
