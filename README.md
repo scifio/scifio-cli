@@ -1,4 +1,4 @@
-![](http://jenkins.imagej.net/job/SCIFIO-CLI/lastBuild/badge/icon)
+[![](http://jenkins.imagej.net/job/SCIFIO-CLI/lastBuild/badge/icon)](http://jenkins.imagej.net/job/SCIFIO-CLI/)
 
 SCIFIO Command Line Tools
 =========================
