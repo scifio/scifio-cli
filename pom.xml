@@ -3,17 +3,30 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>io.scif</groupId>
-		<artifactId>pom-scifio</artifactId>
-		<version>7.0.0</version>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>12.0.0</version>
 		<relativePath />
 	</parent>
 
+	<groupId>io.scif</groupId>
 	<artifactId>scifio-cli</artifactId>
 	<version>0.3.3-SNAPSHOT</version>
 
 	<name>SCIFIO Command Line Tools</name>
 	<description>Pluggable command-line tools for performing SCIFIO-based image IO operations.</description>
+	<url>http://imagej.net/SCIFIO_Command_Line_Tools</url>
+	<inceptionYear>2011</inceptionYear>
+	<organization>
+		<name>SCIFIO</name>
+		<url>http://scif.io/</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Simplified BSD License</name>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<developers>
 		<developer>
@@ -54,6 +67,13 @@
 		</contributor>
 	</contributors>
 
+	<mailingLists>
+		<mailingList>
+			<name>ImageJ Forum</name>
+			<archive>http://forum.imagej.net/</archive>
+		</mailingList>
+	</mailingLists>
+
 	<scm>
 		<connection>scm:git:git://github.com/scifio/scifio-cli</connection>
 		<developerConnection>scm:git:git@github.com:scifio/scifio-cli</developerConnection>
@@ -68,6 +88,15 @@
 		<system>Jenkins</system>
 		<url>http://jenkins.imagej.net/job/SCIFIO-CLI/</url>
 	</ciManagement>
+
+	<properties>
+		<main-class>io.scif.cli.SCIFIOTools</main-class>
+		<package-name>io.scif.cli</package-name>
+		<license.licenseName>bsd_2</license.licenseName>
+		<license.copyrightOwners>Board of Regents of the University of
+Wisconsin-Madison.</license.copyrightOwners>
+		<license.projectName>SCIFIO library for reading and converting scientific file formats.</license.projectName>
+	</properties>
 
 	<repositories>
 		<repository>
@@ -110,7 +139,7 @@
 					<repositoryLayout>flat</repositoryLayout>
 					<programs>
 						<program>
-							<mainClass>io.scif.cli.SCIFIOTools</mainClass>
+							<mainClass>${main-class}</mainClass>
 							<id>scifio</id>
 						</program>
 					</programs>
