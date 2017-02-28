@@ -85,8 +85,8 @@
 		<url>https://github.com/scifio/scifio-cli/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Jenkins</system>
-		<url>http://jenkins.imagej.net/job/SCIFIO-CLI/</url>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/scifio/scifio-cli</url>
 	</ciManagement>
 
 	<properties>
