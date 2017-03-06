@@ -79,11 +79,11 @@ You can also run the ```help``` meta-command:
 
 Don't worry about making mistakes with the command invocation - commands will always print their usage on failure.
 
-Mailing List
+Getting help
 ------------
 
-If you run into any problems or have questions about the commands, or adding new commands, please use the mailing list:
-
-* [scifio@scif.io](http://scif.io/mailman/listinfo/scifio)
+If you run into any problems or have questions about the commands,
+or adding new commands, please use the
+[scifio tag on the ImageJ Forum](http://forum.imagej.net/tags/scifio).
 
 Thank you for using the SCIFIO command-line tools!
