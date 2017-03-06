@@ -8,22 +8,26 @@ An extensible application for using SCIFIO components from the command line.
 Installation
 ------------
 
-Bash script and Windows .bat packages are available. The first step is to download one of the archives. Either:
+The easiest way to run the SCIFIO command line tools is via the
+[jrun](https://github.com/ctrueden/jrun) launcher.
 
-* [scripts.zip](http://jenkins.imagej.net/view/SCIFIO/job/SCIFIO/lastSuccessfulBuild/artifact/tools/target/scifio-tools-0.7.4-SNAPSHOT-scripts.zip)
+Add the following to your `.jrunrc`:
+```ini
+[shortcuts]
+scifio = io.scif:scifio-cli
 
-or
+[repositories]
+imagej.public = https://maven.imagej.net/content/groups/public
+```
 
-* [scripts.bz2](http://jenkins.imagej.net/view/SCIFIO/job/SCIFIO/lastSuccessfulBuild/artifact/tools/target/scifio-tools-0.7.4-SNAPSHOT-scripts.tar.bz2)
-
-and extract the downloaded archive to a directory of your choice.
-
-Two subdirectories will be extracted:
-
-* ```/bin``` - contains the scifio scripts. If you add this directory to your ```PATH``` environment variable, you can run these scripts from any directory. See the [usage](#usage) section for specifics on running these scripts.
-* ```/repo``` - contains a flattened local repository of all the dependencies required to run the SCIFIO command-line tools. Everything in this directory will be added to the script classpath, so feel free to add more plugins to this directory. For example, adding [scifio-lifesci](https://github.com/scifio/scifio-lifesci) will allow any commands you run to operate on supported [Bio-Formats](http://www.openmicroscopy.org/site/products/bio-formats) datasets. New commands can also be added by implementing [SCIFIOToolCommand](https://github.com/scifio/scifio/blob/master/tools/src/main/java/io/scif/tools/SCIFIOToolCommand.java).
-
-Note that the relative location of ```/bin``` and ```/repo``` is important. However, if these directories are separated, you can still set a ```REPO``` environment variable that points to the script dependencies. In addition to this directory, the ```CLASSPATH``` environment variable will always be included.
+And then run:
+```
+jrun scifio
+```
+The first time you run it, it will bootstrap the libraries into your Maven
+local repository cache (typically in `~/.m2/repository`) and symlinked them
+into the `jrun` cache (typically at `~/.jrun/io.scif/scifio-cli`).
+Subsequent invocations will be much faster.
 
 Building from source
 --------------------
