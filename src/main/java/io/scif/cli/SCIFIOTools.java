@@ -2,7 +2,7 @@
  * #%L
  * SCIFIO library for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2011 - 2017 Board of Regents of the University of
+ * Copyright (C) 2011 - 2018 Board of Regents of the University of
  * Wisconsin-Madison.
  * %%
  * Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ import org.scijava.service.SciJavaService;
  * command line arguments, where the first argument is the simple, lowercase
  * class name of the desired command.
  * <p>
- * For example, {@link io.scif.cli.commands.Show} can be invoked by passing
+ * For example, {@link io.scif.cli.show.Show} can be invoked by passing
  * {@code show ...} to the {@link #run(String...)} method, or as a main method
  * argument.
  * </p>
@@ -122,7 +122,7 @@ public final class SCIFIOTools {
 			final List<SCIFIOToolCommand> commands =
 				ctx.getService(PluginService.class).createInstancesOfType(
 					SCIFIOToolCommand.class);
-			cmdMap = new HashMap<String, SCIFIOToolCommand>();
+			cmdMap = new HashMap<>();
 
 			for (final SCIFIOToolCommand cmd : commands) {
 				cmdMap.put(cmd.commandName(), cmd);

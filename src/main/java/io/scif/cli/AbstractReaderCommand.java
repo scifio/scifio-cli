@@ -2,7 +2,7 @@
  * #%L
  * SCIFIO library for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2011 - 2017 Board of Regents of the University of
+ * Copyright (C) 2011 - 2018 Board of Regents of the University of
  * Wisconsin-Madison.
  * %%
  * Redistribution and use in source and binary forms, with or without
@@ -28,17 +28,13 @@
  * #L%
  */
 
-package io.scif.cli.commands;
+package io.scif.cli;
 
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
 import io.scif.Metadata;
 import io.scif.Plane;
 import io.scif.Reader;
-import io.scif.cli.AbstractSCIFIOToolCommand;
-import io.scif.cli.LongArrayOptionHandler;
-import io.scif.cli.SCIFIOToolCommand;
-import io.scif.common.DataTools;
 import io.scif.config.SCIFIOConfig;
 import io.scif.filters.ChannelFiller;
 import io.scif.filters.FileStitcher;
@@ -53,10 +49,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.imagej.axis.CalibratedAxis;
+import net.imglib2.FinalInterval;
+import net.imglib2.Interval;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.Option;
 import org.scijava.plugin.Parameter;
+import org.scijava.util.ArrayUtils;
 
 /**
  * Abstract superclass for {@link SCIFIOToolCommand} implementations that read
@@ -228,7 +227,7 @@ public abstract class AbstractReaderCommand extends AbstractSCIFIOToolCommand {
 	/**
 	 * Intermediate read method. Iterates over the dataset, delegating the actual
 	 * open pixel operations to the
-	 * {@link #processPlane(Reader, Plane, int, long, long, long[], long[])}
+	 * {@link #processPlane(Reader, Plane, int, long, long, Interval)}
 	 * method.
 	 * 
 	 * @param reader Reader to use for opening a dataset
@@ -255,7 +254,7 @@ public abstract class AbstractReaderCommand extends AbstractSCIFIOToolCommand {
 			planeCounts[i] = npLengths[i] - npOffsets[i];
 		}
 		final long planeCount =
-			planeCounts.length > 0 ? DataTools.safeMultiply64(planeCounts) : 1;
+			planeCounts.length > 0 ? ArrayUtils.safeMultiply64(planeCounts) : 1;
 
 		long planeIndex = FormatTools.positionToRaster(0, m, position);
 		Plane plane = null;
@@ -264,9 +263,12 @@ public abstract class AbstractReaderCommand extends AbstractSCIFIOToolCommand {
 		// As long as we have planes to proces, open the next plane's pixels
 		// according to the needs of the current plugin
 		do {
-			plane =
-				processPlane(reader, plane, 0, planeIndex, planeNo++, planeOffsets,
-					planeLengths);
+			final long[] planeMax = new long[planeLengths.length];
+			for (int d = 0; d < planeMax.length; d++) {
+				planeMax[d] = planeOffsets[d] + planeLengths[d] - 1;
+			}
+			final Interval bounds = new FinalInterval(planeOffsets, planeMax);
+			plane = processPlane(reader, plane, 0, planeIndex, planeNo++, bounds);
 
 			// Print statistics
 			info("Processed: " + planeNo + "/" + planeCount + " planes.");
@@ -281,8 +283,8 @@ public abstract class AbstractReaderCommand extends AbstractSCIFIOToolCommand {
 	 * perform any command-specific operations.
 	 */
 	protected abstract Plane processPlane(Reader reader, Plane plane,
-		int imageIndex, long planeIndex, long planeNo, long[] planeMin,
-		long[] planeMax) throws CmdLineException;
+		int imageIndex, long planeIndex, long planeNo, Interval bounds)
+		throws CmdLineException;
 
 	/**
 	 * @return A {@link SCIFIOConfig} based on the parameters passed to this

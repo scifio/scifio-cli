@@ -2,7 +2,7 @@
  * #%L
  * SCIFIO library for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2011 - 2017 Board of Regents of the University of
+ * Copyright (C) 2011 - 2018 Board of Regents of the University of
  * Wisconsin-Madison.
  * %%
  * Redistribution and use in source and binary forms, with or without
@@ -28,21 +28,21 @@
  * #L%
  */
 
-package io.scif.cli.commands;
+package io.scif.cli.convert;
 
 import io.scif.FormatException;
 import io.scif.Metadata;
 import io.scif.Plane;
 import io.scif.Reader;
 import io.scif.Writer;
-import io.scif.common.Constants;
+import io.scif.cli.AbstractReaderCommand;
+import io.scif.cli.SCIFIOToolCommand;
 import io.scif.config.SCIFIOConfig;
 import io.scif.filters.ReaderFilter;
 import io.scif.formats.TIFFFormat;
 import io.scif.io.Location;
 import io.scif.services.InitializeService;
 import io.scif.services.LocationService;
-import io.scif.cli.SCIFIOToolCommand;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -50,6 +50,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.imglib2.Interval;
 
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
@@ -75,7 +77,7 @@ public class Convert extends AbstractReaderCommand {
 	private String out;
 
 	@Argument(index = 2, multiValued = true)
-	private final List<String> arguments = new ArrayList<String>();
+	private final List<String> arguments = new ArrayList<>();
 
 	// -- Parameters --
 
@@ -179,7 +181,7 @@ public class Convert extends AbstractReaderCommand {
 	@Override
 	protected Plane processPlane(final Reader reader, Plane plane,
 		final int imageIndex, final long planeIndex, final long planeNo,
-		final long[] planeMin, final long[] planeMax) throws CmdLineException
+		final Interval bounds) throws CmdLineException
 	{
 		// The loop calling this method is reader-centric, controlled by the
 		// number of planes in the Reader. If some were truncated by the writer
@@ -190,14 +192,11 @@ public class Convert extends AbstractReaderCommand {
 			try {
 				// open the specified plane
 				if (plane == null) {
-					plane =
-						reader.openPlane(imageIndex, planeIndex, planeMin, planeMax,
-							getConfig());
+					plane = reader.openPlane(imageIndex, planeIndex, bounds, getConfig());
 				}
 				else {
-					plane =
-						reader.openPlane(imageIndex, planeIndex, plane, planeMin, planeMax,
-							getConfig());
+					plane = reader.openPlane(imageIndex, planeIndex, plane, bounds,
+						getConfig());
 				}
 				// write the specified plane
 				writer.savePlane(imageIndex, planeNo, plane);
@@ -230,17 +229,16 @@ public class Convert extends AbstractReaderCommand {
 	 * @return A Writer initialized using this command's configuration.
 	 */
 	private Writer makeWriter(final Metadata sourceMeta) throws CmdLineException {
-		Writer writer;
+		Writer w;
 		try {
 			// Initialize the writer, and don't allow files to be opened to determine
 			// format compatibility (as the destination doesn't exist on disk).
-			writer =
-				initializeService.initializeWriter(sourceMeta, out, new SCIFIOConfig()
-					.checkerSetOpen(false));
+			w = initializeService.initializeWriter(sourceMeta, out, //
+				new SCIFIOConfig().checkerSetOpen(false));
 
 			// Set writer configuration
-			if (writer instanceof TIFFFormat.Writer && bigTiff != null) {
-				((TIFFFormat.Writer<?>) writer).setBigTiff(bigTiff);
+			if (w instanceof TIFFFormat.Writer && bigTiff != null) {
+				((TIFFFormat.Writer<?>) w).setBigTiff(bigTiff);
 			}
 		}
 		catch (final FormatException e) {
@@ -250,7 +248,7 @@ public class Convert extends AbstractReaderCommand {
 			throw new CmdLineException(null, e.getMessage());
 		}
 
-		return writer;
+		return w;
 	}
 
 	/**
@@ -271,9 +269,8 @@ public class Convert extends AbstractReaderCommand {
 					warn("Warning: output file " + out + " exists.");
 					warn("Do you want to overwrite it? ([y]/n)");
 					try {
-						final BufferedReader r =
-							new BufferedReader(new InputStreamReader(System.in,
-								Constants.ENCODING));
+						final BufferedReader r = //
+							new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
 						final String choice = r.readLine().trim().toLowerCase();
 						overwrite = !choice.startsWith("n");
 					}

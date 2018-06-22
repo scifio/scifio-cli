@@ -2,7 +2,7 @@
  * #%L
  * SCIFIO library for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2011 - 2017 Board of Regents of the University of
+ * Copyright (C) 2011 - 2018 Board of Regents of the University of
  * Wisconsin-Madison.
  * %%
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
  * #L%
  */
 
-package io.scif.cli.commands;
+package io.scif.cli.info;
 
 import io.scif.FormatException;
 import io.scif.ImageMetadata;
@@ -72,7 +72,7 @@ public class Info extends AbstractSCIFIOToolCommand {
 	private String file;
 
 	@Argument(index = 1, multiValued = true)
-	private final List<String> arguments = new ArrayList<String>();
+	private final List<String> arguments = new ArrayList<>();
 
 	// -- AbstractSCIFIOToolCommand API --
 

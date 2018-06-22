@@ -2,7 +2,7 @@
  * #%L
  * SCIFIO library for reading and converting scientific file formats.
  * %%
- * Copyright (C) 2011 - 2017 Board of Regents of the University of
+ * Copyright (C) 2011 - 2018 Board of Regents of the University of
  * Wisconsin-Madison.
  * %%
  * Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
  * #L%
  */
 
-package io.scif.cli.commands;
+package io.scif.cli.show;
 
 import io.scif.BufferedImagePlane;
 import io.scif.FormatException;
@@ -36,8 +36,8 @@ import io.scif.ImageMetadata;
 import io.scif.Plane;
 import io.scif.Reader;
 import io.scif.Writer;
+import io.scif.cli.AbstractReaderCommand;
 import io.scif.cli.SCIFIOToolCommand;
-import io.scif.common.DataTools;
 import io.scif.gui.AWTImageTools;
 import io.scif.gui.GUIService;
 import io.scif.io.ByteArrayHandle;
@@ -46,7 +46,6 @@ import io.scif.io.RandomAccessInputStream;
 import io.scif.services.FormatService;
 import io.scif.services.InitializeService;
 import io.scif.services.LocationService;
-import io.scif.util.AsciiImage;
 import io.scif.util.FormatTools;
 
 import java.awt.BorderLayout;
@@ -72,9 +71,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -86,6 +82,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.imglib2.Interval;
+
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.Option;
@@ -93,6 +91,7 @@ import org.scijava.Context;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
+import org.scijava.util.Bytes;
 
 /**
  * Opens a dataset for viewing. An ascii version can be printed as output for
@@ -117,7 +116,7 @@ public class Show extends AbstractReaderCommand {
 	private String file;
 
 	@Argument(index = 1, multiValued = true)
-	private final List<String> arguments = new ArrayList<String>();
+	private final List<String> arguments = new ArrayList<>();
 
 	// -- Options --
 
@@ -126,10 +125,6 @@ public class Show extends AbstractReaderCommand {
 		aliases = "--ascii",
 		usage = "display an ascii rendering of the image. useful on headless systems")
 	private boolean ascii;
-
-	@Option(name = "-b", aliases = "--thumbs",
-		usage = "read thumbnails instead of normal pixels")
-	private boolean thumbs;
 
 	@Option(name = "-n", aliases = "--normalize",
 		usage = "normalize floating point images (may result in loss of precision)")
@@ -193,24 +188,16 @@ public class Show extends AbstractReaderCommand {
 	@Override
 	protected Plane processPlane(final Reader reader, Plane plane,
 		final int imageIndex, final long planeIndex, final long planeNo,
-		final long[] planeMin, final long[] planeMax) throws CmdLineException
+		final Interval bounds) throws CmdLineException
 	{
 		try {
 			// open the plane
-			if (thumbs) {
-				plane = reader.openThumbPlane(imageIndex, planeIndex);
+			if (plane == null) {
+				plane = reader.openPlane(imageIndex, planeIndex, bounds, getConfig());
 			}
 			else {
-				if (plane == null) {
-					plane =
-						reader.openPlane(imageIndex, planeIndex, planeMin, planeMax,
-							getConfig());
-				}
-				else {
-					plane =
-						reader.openPlane(imageIndex, planeIndex, plane, planeMin, planeMax,
-							getConfig());
-				}
+				plane = reader.openPlane(imageIndex, planeIndex, plane, bounds,
+					getConfig());
 			}
 		}
 		catch (final FormatException e) {
@@ -225,34 +212,33 @@ public class Show extends AbstractReaderCommand {
 			reader.getMetadata().get(imageIndex).isLittleEndian();
 
 		// Convert the byte array to an appropriately typed data array
-		Object pix =
-			DataTools.makeDataArray(plane.getBytes(), FormatTools
-				.getBytesPerPixel(pixelType), FormatTools.isFloatingPoint(pixelType),
-				littleEndian);
+		Object pix = Bytes.makeArray(plane.getBytes(), //
+			FormatTools.getBytesPerPixel(pixelType), //
+			FormatTools.isFloatingPoint(pixelType), littleEndian);
 
 		// Convert the data array back to a simple byte array, normalizing
 		// floats and doubles if needed
 		byte[] bytes = null;
 		if (pix instanceof short[]) {
-			bytes = DataTools.shortsToBytes((short[]) pix, littleEndian);
+			bytes = Bytes.fromShorts((short[]) pix, littleEndian);
 		}
 		else if (pix instanceof int[]) {
-			bytes = DataTools.intsToBytes((int[]) pix, littleEndian);
+			bytes = Bytes.fromInts((int[]) pix, littleEndian);
 		}
 		else if (pix instanceof long[]) {
-			bytes = DataTools.longsToBytes((long[]) pix, littleEndian);
+			bytes = Bytes.fromLongs((long[]) pix, littleEndian);
 		}
 		else if (pix instanceof float[]) {
 			if (normalize) {
-				pix = DataTools.normalizeFloats((float[]) pix);
+				pix = Bytes.normalize((float[]) pix);
 			}
-			bytes = DataTools.floatsToBytes((float[]) pix, littleEndian);
+			bytes = Bytes.fromFloats((float[]) pix, littleEndian);
 		}
 		else if (pix instanceof double[]) {
 			if (normalize) {
-				pix = DataTools.normalizeDoubles((double[]) pix);
+				pix = Bytes.normalize((double[]) pix);
 			}
-			bytes = DataTools.doublesToBytes((double[]) pix, littleEndian);
+			bytes = Bytes.fromDoubles((double[]) pix, littleEndian);
 		}
 		else if (pix instanceof byte[]) {
 			bytes = (byte[]) pix;
@@ -308,7 +294,7 @@ public class Show extends AbstractReaderCommand {
 	 * @param reader Reader to use for opening pixels
 	 */
 	private void showPixels(final Reader reader) throws CmdLineException {
-		bImages = new ArrayList<BufferedImage>();
+		bImages = new ArrayList<>();
 
 		read(reader);
 
@@ -339,24 +325,25 @@ public class Show extends AbstractReaderCommand {
 	private void mapLocation() throws IOException {
 		if (getMap() != null) locationService.mapId(file, getMap());
 		else if (preload) {
-			final RandomAccessInputStream f =
-				new RandomAccessInputStream(getContext(), file);
-			final int len = (int) f.length();
-			info("Caching " + len + " bytes:");
-			final byte[] b = new byte[len];
-			final int blockSize = 8 * 1024 * 1024; // 8 MB
-			int read = 0, left = len;
-			while (left > 0) {
-				final int r = f.read(b, read, blockSize < left ? blockSize : left);
-				read += r;
-				left -= r;
-				final float ratio = (float) read / len;
-				final int p = (int) (100 * ratio);
-				info("\tRead " + read + " bytes (" + p + "% complete)");
+			try (final RandomAccessInputStream f = new RandomAccessInputStream(
+				getContext(), file))
+			{
+				final int len = (int) f.length();
+				info("Caching " + len + " bytes:");
+				final byte[] b = new byte[len];
+				final int blockSize = 8 * 1024 * 1024; // 8 MB
+				int read = 0, left = len;
+				while (left > 0) {
+					final int r = f.read(b, read, blockSize < left ? blockSize : left);
+					read += r;
+					left -= r;
+					final float ratio = (float) read / len;
+					final int p = (int) (100 * ratio);
+					info("\tRead " + read + " bytes (" + p + "% complete)");
+				}
+				final ByteArrayHandle preloaded = new ByteArrayHandle(b);
+				locationService.mapFile(file, preloaded);
 			}
-			f.close();
-			final ByteArrayHandle preloaded = new ByteArrayHandle(b);
-			locationService.mapFile(file, preloaded);
 		}
 	}
 
@@ -410,8 +397,6 @@ public class Show extends AbstractReaderCommand {
 		private final JSlider nSlider;
 
 		private final JLabel probeLabel;
-
-		private final JMenuItem fileView, fileSave;
 
 		private String filename;
 
@@ -475,53 +460,6 @@ public class Show extends AbstractReaderCommand {
 			probeLabel.setBorder(new BevelBorder(BevelBorder.RAISED));
 			pane.add(BorderLayout.NORTH, probeLabel);
 			iconLabel.addMouseMotionListener(this);
-
-			// menu bar
-			final JMenuBar menubar = new JMenuBar();
-			// FIXME: currently the menu bar is disabled to restrict the use of
-			// ImageViewer to the Show command. We could attempt to get this
-			// implementation working nicely, or just convert to an IJ2
-			// implementation.
-			// setJMenuBar(menubar);
-
-			final JMenu file = new JMenu("File");
-			file.setMnemonic('f');
-			menubar.add(file);
-			final JMenuItem fileOpen = new JMenuItem("Open...");
-			fileOpen.setMnemonic('o');
-			fileOpen.setActionCommand("open");
-			fileOpen.addActionListener(this);
-			file.add(fileOpen);
-			fileSave = new JMenuItem("Save...");
-			fileSave.setMnemonic('s');
-			fileSave.setEnabled(false);
-			fileSave.setActionCommand("save");
-			fileSave.addActionListener(this);
-			file.add(fileSave);
-			fileView = new JMenuItem("View Metadata...");
-			final JMenuItem fileExit = new JMenuItem("Exit");
-			fileExit.setMnemonic('x');
-			fileExit.setActionCommand("exit");
-			fileExit.addActionListener(this);
-			file.add(fileExit);
-
-			final JMenu options = new JMenu("Options");
-			options.setMnemonic('p');
-			menubar.add(options);
-			final JMenuItem optionsFPS = new JMenuItem("Frames per Second...");
-			optionsFPS.setMnemonic('f');
-			optionsFPS.setActionCommand("fps");
-			optionsFPS.addActionListener(this);
-			options.add(optionsFPS);
-
-			final JMenu help = new JMenu("Help");
-			help.setMnemonic('h');
-			menubar.add(help);
-			final JMenuItem helpAbout = new JMenuItem("About...");
-			helpAbout.setMnemonic('a');
-			helpAbout.setActionCommand("about");
-			helpAbout.addActionListener(this);
-			help.add(helpAbout);
 
 			// add key listener to focusable components
 			nSlider.addKeyListener(this);
@@ -605,11 +543,6 @@ public class Show extends AbstractReaderCommand {
 			wait(false);
 		}
 
-		/** Sets the viewer to display the given images. */
-		public void setImages(final BufferedImage[] img) {
-			setImages(null, img);
-		}
-
 		/**
 		 * Sets the viewer to display the given images, obtaining corresponding core
 		 * metadata from the specified format reader.
@@ -619,9 +552,6 @@ public class Show extends AbstractReaderCommand {
 			myReader = reader;
 			images = img;
 
-			fileView.setEnabled(true);
-
-			fileSave.setEnabled(true);
 			nSlider.removeChangeListener(this);
 			nSlider.setValue(1);
 			nSlider.setMaximum(images.length);
@@ -632,7 +562,7 @@ public class Show extends AbstractReaderCommand {
 			updateLabel(-1, -1);
 			sb.setLength(0);
 			if (filename != null) {
-				sb.append(reader.getCurrentFile());
+				sb.append(filename);
 				sb.append(" ");
 			}
 			final String format = reader == null ? null : reader.getFormat()
@@ -688,8 +618,8 @@ public class Show extends AbstractReaderCommand {
 				wait(false);
 				final int rval = chooser.showOpenDialog(this);
 				if (rval == JFileChooser.APPROVE_OPTION) {
-					final File file = chooser.getSelectedFile();
-					if (file != null) open(file.getAbsolutePath(), myReader);
+					final File f = chooser.getSelectedFile();
+					if (f != null) open(f.getAbsolutePath(), myReader);
 				}
 			}
 			else if ("save".equals(cmd)) {
@@ -707,15 +637,16 @@ public class Show extends AbstractReaderCommand {
 							logService.error(e1);
 						}
 					}
-					final File file = chooser.getSelectedFile();
+					final File f = chooser.getSelectedFile();
+					final String destination = f.getAbsolutePath();
 					try {
 						myWriter = initializeService.initializeWriter(myReader
-							.getMetadata(), file.getAbsolutePath());
+							.getMetadata(), destination);
 					}
 					catch (FormatException | IOException e1) {
 						logService.error(e);
 					}
-					if (file != null) save(file.getAbsolutePath(), myWriter);
+					save(destination, myWriter);
 				}
 			}
 			else if ("exit".equals(cmd)) dispose();
