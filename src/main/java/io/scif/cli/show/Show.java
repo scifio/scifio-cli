@@ -40,12 +40,8 @@ import io.scif.cli.AbstractReaderCommand;
 import io.scif.cli.SCIFIOToolCommand;
 import io.scif.gui.AWTImageTools;
 import io.scif.gui.GUIService;
-import io.scif.io.ByteArrayHandle;
-import io.scif.io.Location;
-import io.scif.io.RandomAccessInputStream;
 import io.scif.services.FormatService;
 import io.scif.services.InitializeService;
-import io.scif.services.LocationService;
 import io.scif.util.FormatTools;
 
 import java.awt.BorderLayout;
@@ -88,6 +84,9 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.Option;
 import org.scijava.Context;
+import org.scijava.io.location.FileLocation;
+import org.scijava.io.location.Location;
+import org.scijava.io.location.LocationService;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -150,13 +149,6 @@ public class Show extends AbstractReaderCommand {
 
 	@Override
 	protected void run() throws CmdLineException {
-		try {
-			mapLocation();
-		}
-		catch (final IOException e) {
-			throw new CmdLineException(null, e.getMessage());
-		}
-
 		final Reader reader = makeReader(file);
 		showPixels(reader);
 	}
@@ -319,35 +311,6 @@ public class Show extends AbstractReaderCommand {
 	}
 
 	/**
-	 * Helper method to map the input file to a specific {@link Location} if
-	 * desired. Also performs preloading if requested.
-	 */
-	private void mapLocation() throws IOException {
-		if (getMap() != null) locationService.mapId(file, getMap());
-		else if (preload) {
-			try (final RandomAccessInputStream f = new RandomAccessInputStream(
-				getContext(), file))
-			{
-				final int len = (int) f.length();
-				info("Caching " + len + " bytes:");
-				final byte[] b = new byte[len];
-				final int blockSize = 8 * 1024 * 1024; // 8 MB
-				int read = 0, left = len;
-				while (left > 0) {
-					final int r = f.read(b, read, blockSize < left ? blockSize : left);
-					read += r;
-					left -= r;
-					final float ratio = (float) read / len;
-					final int p = (int) (100 * ratio);
-					info("\tRead " + read + " bytes (" + p + "% complete)");
-				}
-				final ByteArrayHandle preloaded = new ByteArrayHandle(b);
-				locationService.mapFile(file, preloaded);
-			}
-		}
-	}
-
-	/**
 	 * A basic renderer for image data.
 	 *
 	 * @author Curtis Rueden
@@ -398,7 +361,7 @@ public class Show extends AbstractReaderCommand {
 
 		private final JLabel probeLabel;
 
-		private String filename;
+		private Location location;
 
 		private BufferedImage[] images;
 
@@ -476,14 +439,14 @@ public class Show extends AbstractReaderCommand {
 		}
 
 		/** Opens the given data source using the current format reader. */
-		public void open(final String id) {
+		public void open(final Location source) {
 			wait(true);
 			try {
 				canCloseReader = true;
-				myReader = initializeService.initializeReader(id);
+				myReader = initializeService.initializeReader(source);
 				final long planeCount = myReader.getMetadata().get(0).getPlaneCount();
 				final ProgressMonitor progress = new ProgressMonitor(this, "Reading " +
-					id, null, 0, 1);
+					source, null, 0, 1);
 				progress.setProgress(1);
 				final BufferedImage[] img = new BufferedImage[(int) planeCount];
 				for (long planeIndex = 0; planeIndex < planeCount; planeIndex++) {
@@ -512,14 +475,14 @@ public class Show extends AbstractReaderCommand {
 		 * Saves the current images to the given destination using the current
 		 * format writer.
 		 */
-		public void save(final String id) {
+		public void save(final Location destination) {
 			if (images == null) return;
 			wait(true);
 			try {
-				myWriter.setDest(id);
+				myWriter.setDest(destination);
 				final boolean stack = myWriter.canDoStacks();
 				final ProgressMonitor progress = new ProgressMonitor(this, "Saving " +
-					id, null, 0, stack ? images.length : 1);
+					destination, null, 0, stack ? images.length : 1);
 				if (stack) {
 					// save entire stack
 					for (int i = 0; i < images.length; i++) {
@@ -548,7 +511,7 @@ public class Show extends AbstractReaderCommand {
 		 * metadata from the specified format reader.
 		 */
 		public void setImages(final Reader reader, final BufferedImage[] img) {
-			filename = reader == null ? null : reader.getCurrentFile();
+			location = reader == null ? null : reader.getCurrentLocation();
 			myReader = reader;
 			images = img;
 
@@ -561,8 +524,8 @@ public class Show extends AbstractReaderCommand {
 
 			updateLabel(-1, -1);
 			sb.setLength(0);
-			if (filename != null) {
-				sb.append(filename);
+			if (location != null) {
+				sb.append(location);
 				sb.append(" ");
 			}
 			final String format = reader == null ? null : reader.getFormat()
@@ -573,7 +536,7 @@ public class Show extends AbstractReaderCommand {
 				sb.append(")");
 				sb.append(" ");
 			}
-			if (filename != null || format != null) sb.append("- ");
+			if (location != null || format != null) sb.append("- ");
 			sb.append(TITLE);
 			setTitle(sb.toString());
 			if (images != null) icon.setImage(images[0]);
@@ -587,7 +550,7 @@ public class Show extends AbstractReaderCommand {
 		}
 
 		public Plane getPlane(final BufferedImage image) {
-			final BufferedImagePlane plane = new BufferedImagePlane(context);
+			final BufferedImagePlane plane = new BufferedImagePlane();
 			plane.setData(image);
 			return plane;
 		}
@@ -619,7 +582,8 @@ public class Show extends AbstractReaderCommand {
 				final int rval = chooser.showOpenDialog(this);
 				if (rval == JFileChooser.APPROVE_OPTION) {
 					final File f = chooser.getSelectedFile();
-					if (f != null) open(f.getAbsolutePath(), myReader);
+					final Location source = new FileLocation(f);
+					if (f != null) open(source, myReader);
 				}
 			}
 			else if ("save".equals(cmd)) {
@@ -638,10 +602,10 @@ public class Show extends AbstractReaderCommand {
 						}
 					}
 					final File f = chooser.getSelectedFile();
-					final String destination = f.getAbsolutePath();
+					final Location destination = new FileLocation(f);
 					try {
-						myWriter = initializeService.initializeWriter(myReader
-							.getMetadata(), destination);
+						myWriter = initializeService.initializeWriter( //
+							myReader.getMetadata(), destination);
 					}
 					catch (FormatException | IOException e1) {
 						logService.error(e);
@@ -838,7 +802,7 @@ public class Show extends AbstractReaderCommand {
 		 * Opens from the given data source using the specified reader in a separate
 		 * thread.
 		 */
-		protected void open(final String id, final Reader r) {
+		protected void open(final Location source, final Reader r) {
 			new Thread("ImageViewer-Opener") {
 
 				@Override
@@ -850,7 +814,7 @@ public class Show extends AbstractReaderCommand {
 						logService.info("", exc);
 					}
 					myReader = r;
-					open(id);
+					open(source);
 				}
 			}.start();
 		}
@@ -859,7 +823,7 @@ public class Show extends AbstractReaderCommand {
 		 * Saves to the given data destination using the specified writer in a
 		 * separate thread.
 		 */
-		protected void save(final String id, final Writer w) {
+		protected void save(final Location destination, final Writer w) {
 			new Thread("ImageViewer-Saver") {
 
 				@Override
@@ -871,7 +835,7 @@ public class Show extends AbstractReaderCommand {
 						logService.info("", exc);
 					}
 					myWriter = w;
-					save(id);
+					save(destination);
 				}
 			}.start();
 		}
