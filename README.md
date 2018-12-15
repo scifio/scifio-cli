@@ -9,9 +9,9 @@ Installation
 ------------
 
 The easiest way to run the SCIFIO command line tools is via the
-[jrun](https://github.com/ctrueden/jrun) launcher.
+[jgo](https://github.com/scijava/jgo) launcher.
 
-Add the following to your `.jrunrc`:
+Add the following to your `.jgorc`:
 ```ini
 [shortcuts]
 scifio = io.scif:scifio-cli
@@ -22,11 +22,11 @@ imagej.public = https://maven.imagej.net/content/groups/public
 
 And then run:
 ```
-jrun scifio
+jgo scifio
 ```
 The first time you run it, it will bootstrap the libraries into your Maven
 local repository cache (typically in `~/.m2/repository`) and symlinked them
-into the `jrun` cache (typically at `~/.jrun/io.scif/scifio-cli`).
+into the `jgo` cache (typically at `~/.jgo/io.scif/scifio-cli`).
 Subsequent invocations will be much faster.
 
 Building from source
