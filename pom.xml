@@ -15,7 +15,7 @@
 
 	<name>SCIFIO Command Line Tools</name>
 	<description>Pluggable command-line tools for performing SCIFIO-based image IO operations.</description>
-	<url>http://imagej.net/SCIFIO_Command_Line_Tools</url>
+	<url>https://imagej.net/SCIFIO_Command_Line_Tools</url>
 	<inceptionYear>2011</inceptionYear>
 	<organization>
 		<name>SCIFIO</name>
@@ -32,7 +32,7 @@
 		<developer>
 			<id>ctrueden</id>
 			<name>Curtis Rueden</name>
-			<url>http://imagej.net/User:Rueden</url>
+			<url>https://imagej.net/User:Rueden</url>
 			<roles>
 				<role>founder</role>
 				<role>lead</role>
@@ -46,23 +46,23 @@
 	<contributors>
 		<contributor>
 			<name>Mark Hiner</name>
-			<url>http://imagej.net/User:Hinerm</url>
+			<url>https://imagej.net/User:Hinerm</url>
 			<roles><role>founder</role></roles>
 			<properties><id>hinerm</id></properties>
 		</contributor>
 		<contributor>
 			<name>Sebastien Besson</name>
-			<url>http://imagej.net/User:Sbesson</url>
+			<url>https://imagej.net/User:Sbesson</url>
 			<properties><id>sbesson</id></properties>
 		</contributor>
 		<contributor>
 			<name>Melissa Linkert</name>
-			<url>http://imagej.net/User:Linkert</url>
+			<url>https://imagej.net/User:Linkert</url>
 			<properties><id>melissalinkert</id></properties>
 		</contributor>
 		<contributor>
 			<name>Johannes Schindelin</name>
-			<url>http://imagej.net/User:Schindelin</url>
+			<url>https://imagej.net/User:Schindelin</url>
 			<properties><id>dscho</id></properties>
 		</contributor>
 	</contributors>
@@ -104,7 +104,7 @@ Wisconsin-Madison.</license.copyrightOwners>
 	<repositories>
 		<repository>
 			<id>imagej.public</id>
-			<url>http://maven.imagej.net/content/groups/public</url>
+			<url>https://maven.imagej.net/content/groups/public</url>
 		</repository>
 	</repositories>
 
