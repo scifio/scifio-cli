@@ -166,7 +166,7 @@ public abstract class AbstractReaderCommand extends AbstractSCIFIOToolCommand {
 	protected ReaderFilter makeReader(final String path) throws CmdLineException {
 		ReaderFilter reader;
 		try {
-			reader = initializeService.initializeReader(path, getConfig());
+			reader = initializeService.initializeReader(location(path), getConfig());
 		}
 		catch (final FormatException e) {
 			throw new CmdLineException(null, e.getMessage());

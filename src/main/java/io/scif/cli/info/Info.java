@@ -79,16 +79,12 @@ public class Info extends AbstractSCIFIOToolCommand {
 	@Override
 	protected void run() throws CmdLineException {
 		try {
-			final Metadata meta =
-				initializeService.parseMetadata(file, new SCIFIOConfig()
-					.checkerSetOpen(true));
+			final Metadata meta = initializeService.parseMetadata( //
+				location(file), new SCIFIOConfig().checkerSetOpen(true));
 			printDatasetMetadata(meta);
 			printImageMetadata(meta);
 		}
-		catch (final FormatException e) {
-			throw new CmdLineException(null, e.getMessage());
-		}
-		catch (final IOException e) {
+		catch (final FormatException | IOException e) {
 			throw new CmdLineException(null, e.getMessage());
 		}
 	}

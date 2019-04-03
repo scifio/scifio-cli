@@ -40,14 +40,11 @@ import io.scif.cli.SCIFIOToolCommand;
 import io.scif.config.SCIFIOConfig;
 import io.scif.filters.ReaderFilter;
 import io.scif.formats.TIFFFormat;
-import io.scif.io.Location;
 import io.scif.services.InitializeService;
-import io.scif.services.LocationService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +53,10 @@ import net.imglib2.Interval;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.Option;
+import org.scijava.io.handle.DataHandle;
+import org.scijava.io.handle.DataHandleService;
+import org.scijava.io.location.Location;
+import org.scijava.io.location.LocationService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
@@ -105,6 +106,9 @@ public class Convert extends AbstractReaderCommand {
 	@Parameter
 	private LocationService locationService;
 
+	@Parameter
+	private DataHandleService dataHandleService;
+
 	private Writer writer;
 
 	// -- AbstractSCIFIOToolCommand API --
@@ -114,9 +118,6 @@ public class Convert extends AbstractReaderCommand {
 
 		// Check overwrite status
 		if (checkOverwrite()) {
-			// Begin conversion process
-			if (getMap() != null) locationService.mapId(in, getMap());
-
 			info(in);
 
 			// configure the reader
@@ -233,7 +234,7 @@ public class Convert extends AbstractReaderCommand {
 		try {
 			// Initialize the writer, and don't allow files to be opened to determine
 			// format compatibility (as the destination doesn't exist on disk).
-			w = initializeService.initializeWriter(sourceMeta, out, //
+			w = initializeService.initializeWriter(sourceMeta, location(out),
 				new SCIFIOConfig().checkerSetOpen(false));
 
 			// Set writer configuration
@@ -259,23 +260,28 @@ public class Convert extends AbstractReaderCommand {
 	 * @return true iff it's ok to overwrite the output file
 	 */
 	private boolean checkOverwrite() throws CmdLineException {
-		if (new Location(getContext(), out).exists()) {
+		Location destination = location(out);
+		boolean exists = false;
+		try (final DataHandle<?> handle = dataHandleService.create(destination)) {
+			exists = handle.exists();
+		}
+		catch (final IOException exc) {
+			throw new CmdLineException(null, "Cannot query destination: " + out, exc);
+		}
+		if (exists) {
 
 			// nooverwrite takes precedence.
 			if (nooverwrite == null) {
 				// nooverwrite wasn't specified so check the overwrite field
 				if (overwrite == null) {
 					// overwrite wasn't specified so get user input
-					warn("Warning: output file " + out + " exists.");
+					warn("Warning: destination " + out + " exists.");
 					warn("Do you want to overwrite it? ([y]/n)");
 					try {
 						final BufferedReader r = //
 							new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
 						final String choice = r.readLine().trim().toLowerCase();
 						overwrite = !choice.startsWith("n");
-					}
-					catch (final UnsupportedEncodingException e) {
-						throw new CmdLineException(null, e.getMessage());
 					}
 					catch (final IOException e) {
 						throw new CmdLineException(null, e.getMessage());
@@ -288,11 +294,7 @@ public class Convert extends AbstractReaderCommand {
 				err("Output file exists and no-overwrite flag was specified. Existing.");
 				return false;
 			}
-
-			// delete the file
-			return new Location(getContext(), out).delete();
 		}
-		// File doesn't exist so no need to worry about overwrite status
 		return true;
 	}
 

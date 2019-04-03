@@ -32,12 +32,15 @@ package io.scif.cli;
 
 import io.scif.AbstractSCIFIOPlugin;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.scijava.io.location.Location;
+import org.scijava.io.location.LocationService;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 
@@ -51,6 +54,9 @@ import org.scijava.plugin.Parameter;
 public abstract class AbstractSCIFIOToolCommand extends AbstractSCIFIOPlugin
 	implements SCIFIOToolCommand
 {
+
+	@Parameter
+	private LocationService locationService;
 
 	// -- Fields --
 
@@ -185,5 +191,18 @@ public abstract class AbstractSCIFIOToolCommand extends AbstractSCIFIOPlugin
 	@Override
 	public String commandName() {
 		return getClass().toString().toLowerCase();
+	}
+
+	// -- Internal methods --
+
+	protected Location location(final String source) throws CmdLineException {
+		try {
+			final Location location = locationService.resolve(source);
+			if (location != null) return location;
+			throw new CmdLineException(null, "Unresolvable location: " + source);
+		}
+		catch (final URISyntaxException exc) {
+			throw new CmdLineException(null, "Invalid location: " + source);
+		}
 	}
 }
