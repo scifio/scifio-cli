@@ -17,7 +17,7 @@ Add the following to your `.jgorc`:
 scifio = io.scif:scifio-cli
 
 [repositories]
-imagej.public = https://maven.imagej.net/content/groups/public
+scijava.public = https://maven.scijava.org/content/groups/public
 ```
 
 And then run:
@@ -84,6 +84,6 @@ Getting help
 
 If you run into any problems or have questions about the commands,
 or adding new commands, please use the
-[scifio tag on the ImageJ Forum](http://forum.imagej.net/tags/scifio).
+[scifio tag on the Image.sc Forum](https://forum.image.sc/tags/scifio).
 
 Thank you for using the SCIFIO command-line tools!
