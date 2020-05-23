@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>26.0.0</version>
+		<version>28.0.0</version>
 		<relativePath />
 	</parent>
 
@@ -70,7 +70,7 @@
 	<mailingLists>
 		<mailingList>
 			<name>Image.sc Forum</name>
-			<archive>https://forum.image.sc/tags/scifio</archive>
+			<archive>https://forum.image.sc/tag/scifio</archive>
 		</mailingList>
 	</mailingLists>
 
@@ -93,14 +93,16 @@
 		<main-class>io.scif.cli.SCIFIOTools</main-class>
 		<package-name>io.scif.cli</package-name>
 		<license.licenseName>bsd_2</license.licenseName>
-		<license.copyrightOwners>Board of Regents of the University of
-Wisconsin-Madison.</license.copyrightOwners>
+		<license.copyrightOwners>SCIFIO developers.</license.copyrightOwners>
 		<license.projectName>SCIFIO library for reading and converting scientific file formats.</license.projectName>
+
+		<appassembler-maven-plugin.version>1.8.1</appassembler-maven-plugin.version>
 
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
 		<releaseProfiles>deploy-to-scijava</releaseProfiles>
 
-		<scifio.version>0.38.0</scifio.version>
+		<scifio.version>0.39.1</scifio.version>
+		<args4j.version>2.0.25</args4j.version>
 	</properties>
 
 	<repositories>
@@ -127,7 +129,7 @@ Wisconsin-Madison.</license.copyrightOwners>
 		<dependency>
 			<groupId>args4j</groupId>
 			<artifactId>args4j</artifactId>
-			<version>2.0.25</version>
+			<version>${args4j.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -136,7 +138,7 @@ Wisconsin-Madison.</license.copyrightOwners>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>appassembler-maven-plugin</artifactId>
-				<version>1.8.1</version>
+				<version>${appassembler-maven-plugin.version}</version>
 				<configuration>
 					<extraJvmArguments>-Xms512m</extraJvmArguments>
 					<extraJvmArguments>-Xmx1024m</extraJvmArguments>
