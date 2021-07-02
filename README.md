@@ -1,4 +1,4 @@
-[![](https://travis-ci.org/scifio/scifio-cli.svg?branch=master)](https://travis-ci.org/scifio/scifio-cli)
+[![](https://github.com/scifio/scifio-cli/actions/workflows/build-main.yml/badge.svg)](https://github.com/scifio/scifio-cli/actions/workflows/build-main.yml)
 
 SCIFIO Command Line Tools
 =========================

@@ -85,8 +85,8 @@
 		<url>https://github.com/scifio/scifio-cli/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Travis CI</system>
-		<url>https://travis-ci.org/scifio/scifio-cli</url>
+		<system>GitHub Actions</system>
+		<url>https://github.com/scifio/scifio-cli/actions</url>
 	</ciManagement>
 
 	<properties>
@@ -99,7 +99,7 @@
 		<appassembler-maven-plugin.version>1.8.1</appassembler-maven-plugin.version>
 
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
-		<releaseProfiles>deploy-to-scijava</releaseProfiles>
+		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
 
 		<scifio.version>0.39.1</scifio.version>
 		<args4j.version>2.0.25</args4j.version>
