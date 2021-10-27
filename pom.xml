@@ -15,7 +15,7 @@
 
 	<name>SCIFIO Command Line Tools</name>
 	<description>Pluggable command-line tools for performing SCIFIO-based image IO operations.</description>
-	<url>https://imagej.net/SCIFIO_Command_Line_Tools</url>
+	<url>https://github.com/scifio/scifio-cli</url>
 	<inceptionYear>2011</inceptionYear>
 	<organization>
 		<name>SCIFIO</name>
