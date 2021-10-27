@@ -19,7 +19,7 @@
 	<inceptionYear>2011</inceptionYear>
 	<organization>
 		<name>SCIFIO</name>
-		<url>http://scif.io/</url>
+		<url>https://scif.io/</url>
 	</organization>
 	<licenses>
 		<license>
@@ -78,7 +78,7 @@
 		<connection>scm:git:git://github.com/scifio/scifio-cli</connection>
 		<developerConnection>scm:git:git@github.com:scifio/scifio-cli</developerConnection>
 		<tag>HEAD</tag>
-		<url>http://github.com/scifio/scifio-cli</url>
+		<url>https://github.com/scifio/scifio-cli</url>
 	</scm>
 	<issueManagement>
 		<system>GitHub Issues</system>
