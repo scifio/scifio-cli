@@ -1,4 +1,4 @@
-[![](https://github.com/scifio/scifio-cli/actions/workflows/build-main.yml/badge.svg)](https://github.com/scifio/scifio-cli/actions/workflows/build-main.yml)
+[![Build Status](https://github.com/scifio/scifio-cli/actions/workflows/build.yml/badge.svg)](https://github.com/scifio/scifio-cli/actions/workflows/build.yml)
 
 SCIFIO Command Line Tools
 =========================
